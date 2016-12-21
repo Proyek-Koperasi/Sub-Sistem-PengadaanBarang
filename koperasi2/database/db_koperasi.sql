@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2016 at 01:29 AM
+-- Generation Time: Dec 21, 2016 at 02:29 AM
 -- Server version: 5.6.20
 -- PHP Version: 5.5.15
 
@@ -89,24 +89,30 @@ CREATE TABLE IF NOT EXISTS `t_anggota` (
 
 CREATE TABLE IF NOT EXISTS `t_barang` (
   `id_barang` varchar(20) NOT NULL,
-  `nama_barang` varchar(25) NOT NULL,
-  `jumlah_barang` int(5) NOT NULL,
+  `nama_barang` varchar(30) NOT NULL,
+  `kategori_barang` varchar(25) NOT NULL,
+  `stok_gudang` int(5) NOT NULL,
+  `stok_toko` int(5) NOT NULL,
   `tanggal_pembuatan_barang` date NOT NULL,
   `tanggal_kadaluarsa_barang` date NOT NULL,
   `max_persediaan_barang` int(5) NOT NULL,
   `min_persediaan_barang` int(5) NOT NULL,
-  `isi_satuan` varchar(6) NOT NULL,
+  `isi_satuan` varchar(20) NOT NULL,
   `harga_beli` int(7) NOT NULL,
-  `harga_jual` int(7) NOT NULL
+  `margin` double NOT NULL,
+  `gambar` text NOT NULL,
+  `deskripsi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `t_barang`
 --
 
-INSERT INTO `t_barang` (`id_barang`, `nama_barang`, `jumlah_barang`, `tanggal_pembuatan_barang`, `tanggal_kadaluarsa_barang`, `max_persediaan_barang`, `min_persediaan_barang`, `isi_satuan`, `harga_beli`, `harga_jual`) VALUES
-('BRG-20161121-19370', 'Minyak Goreng', 30, '2016-01-20', '2017-11-26', 40, 10, 'liter', 12000, 14500),
-('BRG-20161121-66102', 'Gula', 23, '2016-09-30', '2017-11-30', 30, 10, 'kg', 11000, 12500);
+INSERT INTO `t_barang` (`id_barang`, `nama_barang`, `kategori_barang`, `stok_gudang`, `stok_toko`, `tanggal_pembuatan_barang`, `tanggal_kadaluarsa_barang`, `max_persediaan_barang`, `min_persediaan_barang`, `isi_satuan`, `harga_beli`, `margin`, `gambar`, `deskripsi`) VALUES
+('BRG-20161121-19370', 'Minyak Goreng', 'Kebutuhan Pokok', 40, 15, '2016-01-20', '2017-11-26', 40, 10, 'liter', 12000, 0, 'bimoli.jpg', ''),
+('BRG-20161121-66102', 'Gula', 'Kebutuhan Pokok', 23, 11, '2016-09-30', '2017-11-30', 50, 10, 'kg', 10000, 0, 'gulaku.jpg', ''),
+('BRG-20161122-48531', 'Beras', 'Kebutuhan Pokok', 48, 18, '2016-08-01', '2018-11-23', 75, 15, 'kg', 11000, 0, 'gold_rice.jpg', ''),
+('BRG-20161130-55116', 'Kopi', 'Kebutuhan Pokok', 30, 10, '2016-11-15', '2016-11-26', 40, 10, 'kg', 13000, 10, 'kapal api.jpg', '');
 
 -- --------------------------------------------------------
 
@@ -130,8 +136,15 @@ CREATE TABLE IF NOT EXISTS `t_detail_pembelian` (
 INSERT INTO `t_detail_pembelian` (`id_detail_pembelian`, `id_pembelian`, `id_barang`, `jumlah_barang`, `harga_satuan`, `subtotal`) VALUES
 ('DBL-20161122-2389', 'PBL-20161122-798', 'BRG-20161121-19370', 20, 12000, 240000),
 ('DBL-20161122-2513', 'PBL-20161122-798', 'BRG-20161121-66102', 5, 11000, 55000),
+('DBL-20161122-3936', 'PBL-20161122-1538', 'BRG-20161121-19370', 4, 12000, 48000),
+('DBL-20161122-4270', 'PBL-20161122-1538', 'BRG-20161121-66102', 5, 11000, 55000),
 ('DBL-20161122-7001', 'PBL-20161122-1948', 'BRG-20161121-66102', 10, 11000, 110000),
-('DBL-20161122-8975', 'PBL-20161122-1948', 'BRG-20161121-19370', 10, 12000, 120000);
+('DBL-20161122-8975', 'PBL-20161122-1948', 'BRG-20161121-19370', 10, 12000, 120000),
+('DBL-20161123-3185', 'PBL-20161123-985', 'BRG-20161121-66102', 10, 10000, 100000),
+('DBL-20161123-5992', 'PBL-20161123-985', 'BRG-20161122-48531', 18, 11000, 198000),
+('DBL-20161123-7270', 'PBL-20161123-7520', 'BRG-20161121-19370', 10, 12000, 120000),
+('DBL-20161123-9245', 'PBL-20161123-7520', 'BRG-20161121-66102', 10, 10000, 100000),
+('DBL-20161123-9407', 'PBL-20161123-7520', 'BRG-20161122-48531', 20, 11000, 220000);
 
 -- --------------------------------------------------------
 
@@ -154,8 +167,11 @@ CREATE TABLE IF NOT EXISTS `t_pembelian` (
 --
 
 INSERT INTO `t_pembelian` (`id_pembelian`, `id_admin`, `id_supplier`, `tanggal_pembelian`, `total_harga_pembelian`, `keterangan_pembelian`, `status`) VALUES
+('PBL-20161122-1538', '1', 'SPL-20161121-66990', '2016-11-22 07:11:29', 103000, '', 0),
 ('PBL-20161122-1948', '1', 'SPL-20161121-66990', '2016-11-10 01:11:06', 230000, '', 0),
-('PBL-20161122-798', '1', 'SPL-20161121-57994', '2016-11-22 01:11:33', 295000, '', 0);
+('PBL-20161122-798', '1', 'SPL-20161121-57994', '2016-11-22 01:11:33', 295000, '', 0),
+('PBL-20161123-7520', '1', 'SPL-20161121-78553', '2016-11-23 03:11:16', 440000, '', 0),
+('PBL-20161123-985', '1', 'SPL-20161121-78553', '2016-11-23 02:11:50', 298000, '', 0);
 
 -- --------------------------------------------------------
 
@@ -169,16 +185,17 @@ CREATE TABLE IF NOT EXISTS `t_penjualan` (
   `total_harga_penjualan` int(8) NOT NULL,
   `keterangan_penjualan` varchar(50) NOT NULL,
   `id_anggota` varchar(20) NOT NULL,
-  `id_admin` varchar(20) NOT NULL
+  `id_admin` varchar(20) NOT NULL,
+  `status` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `t_penjualan`
 --
 
-INSERT INTO `t_penjualan` (`id_penjualan`, `tanggal_penjualan`, `total_harga_penjualan`, `keterangan_penjualan`, `id_anggota`, `id_admin`) VALUES
-('PJL-20161031-1867', '2016-10-31 13:10:09', 334000, '', '', 'USR201610123'),
-('PJL-20161031-2269', '2016-10-31 13:10:07', 204000, '', '', 'USR201610123');
+INSERT INTO `t_penjualan` (`id_penjualan`, `tanggal_penjualan`, `total_harga_penjualan`, `keterangan_penjualan`, `id_anggota`, `id_admin`, `status`) VALUES
+('PJL-20161031-1867', '2016-10-31 13:10:09', 334000, '', '', 'USR201610123', 0),
+('PJL-20161031-2269', '2016-10-31 13:10:07', 204000, '', '', 'USR201610123', 0);
 
 -- --------------------------------------------------------
 
@@ -198,9 +215,9 @@ CREATE TABLE IF NOT EXISTS `t_supplier` (
 --
 
 INSERT INTO `t_supplier` (`id_supplier`, `nama_supplier`, `alamat_supplier`, `telp_supplier`) VALUES
-('SPL-20161121-57994', 'Siti Muzdalifatus S', 'Perum Puri Kartika Asri, Malang', '089623737468'),
+('SPL-20161121-57994', 'Siti Muzdalifatus S.', 'Perum Puri Kartika Asri, Malang', '089623737468'),
 ('SPL-20161121-66990', 'Rizkyna Cahyaningrum', 'Perum Bumi Asri, Malang', '085426846393'),
-('SPL-20161121-78553', 'Sari Anggraeni', 'Jl. Bandung No.112, Malang', '089733737468');
+('SPL-20161121-78553', 'Sari Anggraeni', 'Jl. Bunga Andong Timur No 5B, Malang', '089733737469');
 
 -- --------------------------------------------------------
 

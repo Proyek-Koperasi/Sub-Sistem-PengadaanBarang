@@ -120,7 +120,9 @@
                                     <div class="form-group ">
                                         <label for="gambar" class="control-label col-lg-2">Gambar Barang</label>
                                         <div class="col-lg-10">
-                                            <input type="file" name="gambar"   class="form-control" value="<?php echo $barang->gambar ?>">
+                                            <img src="../../../koperasi/images/barang/<?php echo $barang->gambar; ?>" width='200px' height='200px' class='tab-ft' id='trans'>
+
+                                            <input type="file" name="gambar"   class="form-control" value="">
                                         </div>
                                     </div>
                                     <div class="form-group ">
